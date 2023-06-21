@@ -42,7 +42,7 @@ TEST(Vector3, generalOperation)
 	EXPECT_TRUE(isEqual(v1.distanceSquared(v2), 2.f));
 }
 
-TEST(Vector3, assignment)
+TEST(Vector3, assignmentAndCopy)
 {
 	using namespace PositionGenerator;
 	std::random_device rd;
@@ -58,4 +58,33 @@ TEST(Vector3, assignment)
 		Vector3 v3 = v1;
 		EXPECT_TRUE(isEqual(v1, v3)) << "v1=Vector3(" << v1.x() << "," << v1.y() << "," << v1.z() << ")";
 	}
+}
+
+TEST(SensorPosition, dataStorage)
+{
+	using namespace PositionGenerator;
+	std::random_device rd;
+	std::mt19937 e2(rd());
+	std::uniform_real_distribution<float> fDist(std::numeric_limits<float>::min(), std::numeric_limits<float>::max());
+	std::uniform_int_distribution<uint64_t> iDist(std::numeric_limits<uint64_t>::min(), std::numeric_limits<uint64_t>::max());
+
+	auto sensorId = iDist(e2);
+	auto timestamp = iDist(e2);
+	auto Pos = Vector3{ fDist(e2), fDist(e2), fDist(e2) };
+
+	// initialising ctor
+	SensorPosition Sensor1{sensorId, timestamp, Pos};
+	EXPECT_EQ(sensorId, Sensor1.sensorId());
+	EXPECT_EQ(timestamp, Sensor1.timestamp());
+	EXPECT_TRUE(isEqual(Sensor1.position(), Pos));
+
+	// assignment
+	SensorPosition Sensor2;
+	Sensor2.setSensorId(sensorId);
+	Sensor2.setTimestamp(timestamp);
+	Sensor2.setPosition(Pos);
+
+	EXPECT_EQ(sensorId, Sensor2.sensorId());
+	EXPECT_EQ(timestamp, Sensor2.timestamp());
+	EXPECT_TRUE(isEqual(Sensor2.position(), Pos));
 }
