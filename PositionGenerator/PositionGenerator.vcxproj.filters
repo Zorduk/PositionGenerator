@@ -18,9 +18,15 @@
     <ClInclude Include="include\Position.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Generator.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Position.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Generator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

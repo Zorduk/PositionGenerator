@@ -3,10 +3,6 @@
 
 namespace PositionGenerator
 {
-
-	/////////////////
-	// Vector3 
-	////////////////
 	float scalarProduct(const Vector3& First, const Vector3& Second)
 	{
 		return First.x() * Second.x() + First.y() * Second.y() + First.z() * Second.z();
@@ -36,9 +32,6 @@ namespace PositionGenerator
 		Vector3 distV3 = *this - Other;
 		return scalarProduct(distV3, distV3);
 	}
-	/////////////////
-	// Vector3 
-	////////////////
 
 
 }

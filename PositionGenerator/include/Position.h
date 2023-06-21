@@ -3,6 +3,8 @@
 
 namespace PositionGenerator
 {
+	using timestamp_t = uint64_t;
+	using sensorId_t = uint64_t;
 
 	// small storage class that encapsulates a 3d value, immutable
 	class Vector3
@@ -39,7 +41,7 @@ namespace PositionGenerator
 	class SensorPosition
 	{
 	public:
-		SensorPosition(uint64_t SensorId, uint64_t initialTimestamp, const Vector3& initialPosition)
+		SensorPosition(sensorId_t SensorId, timestamp_t initialTimestamp, const Vector3& initialPosition)
 			: m_sensorId(SensorId), m_timestamp(initialTimestamp), m_Position(initialPosition)
 		{}
 
@@ -47,20 +49,20 @@ namespace PositionGenerator
 		SensorPosition(const SensorPosition& Other) = default;
 		SensorPosition& operator=(const SensorPosition& Other) = default;
 
-		uint64_t timestamp() const { return m_timestamp; }
-		void setTimestamp(uint64_t timestamp) { m_timestamp = timestamp; }
+		sensorId_t sensorId() const { return m_sensorId; }
+		void setSensorId(sensorId_t sensorId) { m_sensorId = sensorId; }
 		
-		uint64_t sensorId() const { return m_sensorId; }
-		void setSensorId(uint64_t sensorId) { m_sensorId = sensorId; }
-		
+		timestamp_t timestamp() const { return m_timestamp; }
+		void setTimestamp(timestamp_t timestamp) { m_timestamp = timestamp; }
+
 		Vector3 position() const { return m_Position; }
 		void setPosition(const Vector3& position) { m_Position = position; }
 
 		auto operator<=>(const SensorPosition&) const = default;
 
 	private:
-		uint64_t	m_sensorId = 0;
-		uint64_t	m_timestamp = 0;
+		sensorId_t	m_sensorId = 0;
+		timestamp_t	m_timestamp = 0;
 		Vector3		m_Position;
 	};
 
