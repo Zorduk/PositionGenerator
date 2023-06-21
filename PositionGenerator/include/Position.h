@@ -22,8 +22,13 @@ namespace PositionGenerator
 		float y() const { return m_y; }
 		float z() const { return m_z; }
 
+		float& x() { return m_x; }
+		float& y() { return m_y; }
+		float& z() { return m_z; }
+
 		auto operator<=>(const Vector3&) const = default; 
 
+		void normalize(); 
 	private:
 		float m_x = 0.0f;
 		float m_y = 0.0f;

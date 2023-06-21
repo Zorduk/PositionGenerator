@@ -33,5 +33,22 @@ namespace PositionGenerator
 		return scalarProduct(distV3, distV3);
 	}
 
+	void Vector3::normalize()
+	{
+		auto scProd = scalarProduct(*this, *this);
+		if (scProd > 1.E-10)
+		{
+			auto dist = sqrtf(scProd);
+			m_x /= dist;
+			m_y /= dist;
+			m_z /= dist;
+		}
+		else
+		{
+			// vector too small, will not produce meaningful result
+			m_x = m_y = m_z = 0;
+		}
+	}
+
 
 }
