@@ -31,6 +31,10 @@ namespace PositionGenerator
 		auto move = moveDistance * moveDirection;
 		auto newPos = Sensor.position() + move;
 		clamp(newPos);
+		
+		// update position and timestamp for sensor
+		Sensor.setPosition(newPos);
+		Sensor.setTimestamp(newTimestamp);
 	}
 
 	void Generator::clamp(Vector3& Pos)
@@ -47,7 +51,7 @@ namespace PositionGenerator
 		// for safety, if seedSensors get called outside ctor
 		m_Sensors.clear();
 
-		Vector3 size = m_Param.maxValues() + m_Param.minValues();
+		Vector3 size = m_Param.maxValues() - m_Param.minValues();
 		for (int i = 0; i < m_Param.numOfSensors(); ++i)
 		{
 			Vector3 randomPosWithinSize(

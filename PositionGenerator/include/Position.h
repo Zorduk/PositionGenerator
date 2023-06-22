@@ -6,7 +6,7 @@ namespace PositionGenerator
 	using timestamp_t = uint64_t;
 	using sensorId_t = uint64_t;
 
-	// small storage class that encapsulates a 3d value, immutable
+	// small class that represents a 3d vector
 	class Vector3
 	{
 	public:
