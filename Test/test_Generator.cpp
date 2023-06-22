@@ -147,8 +147,6 @@ TEST(Generator, DISABLED_GenerationMySec)
 		{
 			SensorPosition& Old = Data[Sensor.sensorId()];
 			Vector3 move = Sensor.position() - Old.position();
-			// store new value for next round
-			Old.setPosition(Sensor.position());
 
 			// no movement in z direction
 			EXPECT_EQ(move.z(), 0);
@@ -164,6 +162,9 @@ TEST(Generator, DISABLED_GenerationMySec)
 			EXPECT_LE(Pos.x(), maxValues.x());
 			EXPECT_LE(Pos.y(), maxValues.y());
 			EXPECT_LE(Pos.z(), maxValues.z());
+
+			// store new value for next round
+			Old=Sensor;
 		}
 	}
 }

@@ -37,9 +37,8 @@ TEST(Vector3, generalOperation)
 
 	auto v3 = v1 + v2;
 	EXPECT_TRUE(isEqual(v3, Vector3(1.f, 1.f, 0.f)));
-	EXPECT_LT(v3.distanceSquared(v3), 1.E-10f);
-	EXPECT_TRUE(isEqual(v1.distance(v2), sqrtf(2)));
-	EXPECT_TRUE(isEqual(v1.distanceSquared(v2), 2.f));
+	EXPECT_LT(scalarProduct(v3,v3), 1.E-10f);
+	EXPECT_TRUE(isEqual(scalarProduct(v2 - v1, v2 - v1), 2.f));
 }
 
 TEST(Vector3, assignmentAndCopy)

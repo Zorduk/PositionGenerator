@@ -14,10 +14,6 @@ namespace PositionGenerator
 		Vector3() = default;
 		Vector3(const Vector3& Other) = default;
 		Vector3& operator=(const Vector3& Other) = default;
-	
-		float distance(const Vector3& Other) const; // slow compared to distanceSquared
-		float distanceSquared(const Vector3& Other) const;
-
 		float x() const { return m_x; }
 		float y() const { return m_y; }
 		float z() const { return m_z; }

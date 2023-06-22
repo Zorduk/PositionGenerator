@@ -23,20 +23,11 @@ namespace PositionGenerator
 	{ 
 		return scale * vector; 
 	}
-	float Vector3::distance(const Vector3& Other) const
-	{
-		return sqrtf(distanceSquared(Other));
-	}
-	float Vector3::distanceSquared(const Vector3& Other) const
-	{
-		Vector3 distV3 = *this - Other;
-		return scalarProduct(distV3, distV3);
-	}
-
 	void Vector3::normalize()
 	{
 		auto scProd = scalarProduct(*this, *this);
-		if (scProd > 1.E-10)
+		constexpr float minNorm = 1E-20f;
+		if (scProd > minNorm)
 		{
 			auto dist = sqrtf(scProd);
 			m_x /= dist;
@@ -49,6 +40,4 @@ namespace PositionGenerator
 			m_x = m_y = m_z = 0;
 		}
 	}
-
-
 }
