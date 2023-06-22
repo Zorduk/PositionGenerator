@@ -37,7 +37,7 @@ TEST(Vector3, generalOperation)
 
 	auto v3 = v1 + v2;
 	EXPECT_TRUE(isEqual(v3, Vector3(1.f, 1.f, 0.f)));
-	EXPECT_LT(scalarProduct(v3,v3), 1.E-10f);
+	EXPECT_LT(scalarProduct(v3-v3,v3-v3), 1.E-10f);
 	EXPECT_TRUE(isEqual(scalarProduct(v2 - v1, v2 - v1), 2.f));
 }
 

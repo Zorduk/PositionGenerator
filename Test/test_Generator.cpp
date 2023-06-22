@@ -109,7 +109,7 @@ TEST(Generator, Generation1sec)
 	}
 }
 
-TEST(Generator, DISABLED_GenerationMySec)
+TEST(Generator, GenerationMySec)
 {
 	using namespace PositionGenerator;
 
@@ -140,13 +140,17 @@ TEST(Generator, DISABLED_GenerationMySec)
 	auto testTime = initialTime;
 	for (int round = 0; round < 100; ++round)
 	{
-		testTime += timeStampUnitsPerSecond; // we set the generator to 1 unit per second
+		testTime += timeStampUnitsPerSecond; // 1 sec
 
 		Gen.generateData(testTime);
 		for (const auto& Sensor : Gen)
 		{
 			SensorPosition& Old = Data[Sensor.sensorId()];
 			Vector3 move = Sensor.position() - Old.position();
+
+			timestamp_t elapsed = Sensor.timestamp() - Old.timestamp();
+
+			EXPECT_EQ(elapsed, timeStampUnitsPerSecond);
 
 			// no movement in z direction
 			EXPECT_EQ(move.z(), 0);

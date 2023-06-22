@@ -18,5 +18,16 @@
     <ClCompile Include="PosGen.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="protobuf\SensorPosition.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="protobuf\SensorPosition.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="protobuf\SensorPosition.proto" />
   </ItemGroup>
 </Project>

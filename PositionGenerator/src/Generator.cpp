@@ -16,6 +16,13 @@ namespace PositionGenerator
 		}
 	}
 
+	Vector3 Generator::addNoise(const Vector3& origPosition)
+	{
+		auto xNoise = ((m_DistanceDist(m_Gen) * 2.f) - 1.f) * m_Param.noiseDimension();
+		auto yNoise = ((m_DistanceDist(m_Gen) * 2.f) - 1.f) * m_Param.noiseDimension();
+		return Vector3(origPosition.x() + xNoise, origPosition.y() + yNoise, origPosition.z());
+	}
+
 	void Generator::generateNewSensorData(SensorPosition& Sensor, timestamp_t newTimestamp)
 	{
 		auto elapsed = newTimestamp - Sensor.timestamp();
@@ -61,5 +68,22 @@ namespace PositionGenerator
 			auto randomPosWithinBounds = m_Param.minValues() + randomPosWithinSize;
 			m_Sensors.emplace_back(i, m_Param.initialTimestamp(), randomPosWithinBounds);
 		}
+	}
+	
+	// ChronoBasedGenerator
+	ChronoBasedGenerator::ChronoBasedGenerator(const GenerationParameter& Param)
+		: Generator(
+			GenerationParameter(Param)
+				// overwrite timestamp parameters with correct
+				.setInitialTimestamp(0)
+				.setTimestampUnitPerSecond(1000000))
+		, m_Start(std::chrono::high_resolution_clock::now())
+	{}
+	
+	void ChronoBasedGenerator::generateData()
+	{
+		auto now = std::chrono::high_resolution_clock::now();
+		timestamp_t newTime = std::chrono::duration_cast<std::chrono::microseconds>(now - m_Start).count();
+		Generator::generateData(newTime);
 	}
 }
