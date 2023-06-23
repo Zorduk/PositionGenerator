@@ -17,8 +17,8 @@ std::string generateMessageData(const PositionGenerator::SensorPosition& Sensor,
   GeneratedPosition Pos;
   Data3d* pCoord = Pos.mutable_position();
   pCoord->set_x(PosWithNoise.x());
-  pCoord->set_y(PosWithNoise.x());
-  pCoord->set_z(PosWithNoise.x());
+  pCoord->set_y(PosWithNoise.y());
+  pCoord->set_z(PosWithNoise.z());
   Pos.set_sensorid(Sensor.sensorId());
   Pos.set_timestamp_usec(Sensor.timestamp());
 
@@ -39,7 +39,7 @@ DataList_t generateMessagesForSingleLoop(PositionGenerator::ChronoBasedGenerator
   return msgDataList;
 }
 
-void messageLoop(std::atomic_bool& StopSignal, zmq::socket_t& socket, PositionGenerator::ChronoBasedGenerator& Gen)
+void messageLoop(std::atomic_bool& StopSignal, zmq::socket_t& socket, PositionGenerator::ChronoBasedGenerator& Gen, float FrequencyInHz)
 {
   while (!StopSignal)
   {
@@ -55,7 +55,7 @@ void messageLoop(std::atomic_bool& StopSignal, zmq::socket_t& socket, PositionGe
       }
     }
     // now wait 1000ms
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1000.f/FrequencyInHz)));
   }
 }
 
@@ -75,6 +75,7 @@ int main()
   Vector3 maxValues(100.f, 100.f, 1.5f);
   int numSensors = 10;
   float noiseDimension = 0.3f;
+  float FrequencyInHz = 10.f;
 
   ChronoBasedGenerator Gen(GenerationParameter()
     .setMaximalVelocity(maxVelocity)
@@ -91,12 +92,12 @@ int main()
     zmq::socket_t socket(context, zmq::socket_type::pub);
     socket.bind(BindAddress);
     std::atomic_bool StopSignal = false;
-    auto voidFuture = std::async(messageLoop, std::ref(StopSignal), std::ref(socket), std::ref(Gen));
+    auto voidFuture = std::async(messageLoop, std::ref(StopSignal), std::ref(socket), std::ref(Gen),FrequencyInHz);
     std::cout << "  >>> press RETURN to stop <<<\n ";
     getchar();
     StopSignal = true; // signal thread to quit
   }
-  // at this point all object had their destructor called
+  // at this point all zmq objects had their destructor called
   std::cout << "  stopped. \n";
 }
 

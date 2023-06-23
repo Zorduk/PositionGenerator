@@ -22,8 +22,6 @@ namespace PositionGenerator
 		float& y() { return m_y; }
 		float& z() { return m_z; }
 
-		auto operator<=>(const Vector3&) const = default; 
-
 		void normalize(); 
 	private:
 		float m_x = 0.0f;
@@ -43,7 +41,7 @@ namespace PositionGenerator
 	{
 	public:
 		SensorPosition(sensorId_t SensorId, timestamp_t initialTimestamp, const Vector3& initialPosition)
-			: m_sensorId(SensorId), m_timestamp(initialTimestamp), m_Position(initialPosition)
+			: m_sensorId(SensorId), m_timestamp(initialTimestamp), m_Position(initialPosition), m_Velocity(Vector3(0,0,0))
 		{}
 
 		SensorPosition() = default;
@@ -59,12 +57,15 @@ namespace PositionGenerator
 		Vector3 position() const { return m_Position; }
 		void setPosition(const Vector3& position) { m_Position = position; }
 
-		auto operator<=>(const SensorPosition&) const = default;
+		Vector3 velocity() const { return m_Velocity; }
+		void setVelocity(Vector3 Velocity) { m_Velocity = Velocity; }
+
 
 	private:
 		sensorId_t	m_sensorId = 0;
 		timestamp_t	m_timestamp = 0;
-		Vector3		m_Position;
+		Vector3			m_Position;
+		Vector3			m_Velocity;
 	};
 
 }

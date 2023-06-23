@@ -33,7 +33,7 @@ TEST(Vector3, generalOperation)
 	using namespace PositionGenerator;
 	Vector3 v1(1.f, 0.f, 0.f);
 	Vector3 v2(0.f, 1.f, 0.f);
-	EXPECT_NE(v1, v2);
+	EXPECT_FALSE(isEqual(v1, v2));
 
 	auto v3 = v1 + v2;
 	EXPECT_TRUE(isEqual(v3, Vector3(1.f, 1.f, 0.f)));

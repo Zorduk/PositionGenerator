@@ -61,9 +61,11 @@ namespace PositionGenerator
 		std::vector<SensorPosition> m_Sensors;
 
 		void generateNewSensorData(SensorPosition& Sensor, timestamp_t newTimestamp);
+		void generateWithImpulse(SensorPosition& Sensor, timestamp_t newTimestamp);
 		void clamp(Vector3& Pos);
 		void seedSensors();
 	};
+
 	// now specialize to use chrono timestamps
 	class ChronoBasedGenerator : public Generator
 	{
