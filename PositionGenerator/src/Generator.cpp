@@ -12,34 +12,53 @@ namespace PositionGenerator
 	{
 		for (auto& Sensor : m_Sensors)
 		{
-			generateNewSensorData(Sensor, newTimestamp);
+			generateWithImpulse(Sensor, newTimestamp);
 		}
 	}
 
 	Vector3 Generator::addNoise(const Vector3& origPosition)
 	{
-		auto xNoise = ((m_DistanceDist(m_Gen) * 2.f) - 1.f) * m_Param.noiseDimension();
-		auto yNoise = ((m_DistanceDist(m_Gen) * 2.f) - 1.f) * m_Param.noiseDimension();
-		return Vector3(origPosition.x() + xNoise, origPosition.y() + yNoise, origPosition.z());
+		auto noiseIntensity = m_DistanceDist(m_Gen) * m_Param.noiseDimension();
+		auto Noise = Vector3(m_DistanceDist(m_Gen) - 0.5f, m_DistanceDist(m_Gen) - 0.5f, 0);
+		Noise.normalize();
+		Noise = Noise * noiseIntensity;
+		return Vector3(origPosition.x() + Noise.x(), origPosition.y() + Noise.y(), origPosition.z());
 	}
 
-	void Generator::generateNewSensorData(SensorPosition& Sensor, timestamp_t newTimestamp)
+	void Generator::generateWithImpulse(SensorPosition& Sensor, timestamp_t newTimestamp)
 	{
 		auto elapsed = newTimestamp - Sensor.timestamp();
 		float timeInSec = static_cast<float>(elapsed) / static_cast<float>(m_Param.timeStampPerSecond());
 		float maxDistance = m_Param.maxVelocity() * timeInSec;
+		
+		// some experimentation shows best results with 2.5f
+		// too big and there seems to be now real movement
+		// too small and all sensor end up at the border
+		float maxAccelaration = maxDistance * 1.2f; 
+		auto impulseVector = Sensor.velocity();
 
-		// random distance within velocity parameter
-		float moveDistance = m_DistanceDist(m_Gen) * maxDistance;
-
-		// random x-y-direction, z is constant 
-		auto moveDirection = Vector3(m_DistanceDist(m_Gen), m_DistanceDist(m_Gen), 0);
-		moveDirection.normalize();
-		auto move = moveDistance * moveDirection;
+		// random acceleration
+		float accFactor = m_DistanceDist(m_Gen) * maxAccelaration;
+		auto accDirection = Vector3(m_DistanceDist(m_Gen) - 0.5f, m_DistanceDist(m_Gen) - 0.5f, 0);
+		accDirection.normalize();
+		auto acceleration = accFactor * accDirection;
+		
+		auto move = Sensor.velocity() + acceleration;
+		// now make sure, that move is less or equal to maxVelocity
+		float resultingVelo = sqrtf(scalarProduct(move, move));
+		if (resultingVelo > maxDistance)
+		{ 
+			// if we just use maxDistance/resultingVelo as factor, we end up with rounding errors above maxDistance
+			// which will fail our tests, thats why we introduce a safety factor
+			constexpr float safety = 0.001f;
+			move = move * ((maxDistance-safety) / resultingVelo);
+		}
 		auto newPos = Sensor.position() + move;
 		clamp(newPos);
-		
+
 		// update position and timestamp for sensor
+		if (timeInSec > 1.E-20f)
+			Sensor.setVelocity((newPos - Sensor.position())*(1/timeInSec));
 		Sensor.setPosition(newPos);
 		Sensor.setTimestamp(newTimestamp);
 	}
@@ -74,7 +93,7 @@ namespace PositionGenerator
 	ChronoBasedGenerator::ChronoBasedGenerator(const GenerationParameter& Param)
 		: Generator(
 			GenerationParameter(Param)
-				// overwrite timestamp parameters with correct
+				// overwrite timestamp parameters with correct values
 				.setInitialTimestamp(0)
 				.setTimestampUnitPerSecond(1000000))
 		, m_Start(std::chrono::high_resolution_clock::now())

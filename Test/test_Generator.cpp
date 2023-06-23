@@ -173,5 +173,39 @@ TEST(Generator, GenerationMySec)
 	}
 }
 
+TEST(Generator, noiseGen)
+{
+	using namespace PositionGenerator;
+
+	int NumRounds = 100;
+	float maxVelocity = 10.0; // 10m/s
+	uint64_t timeStampUnitsPerSecond = 1000000; // usec
+	timestamp_t initialTime = 10 * timeStampUnitsPerSecond + 450000; // we start at 10,45sec
+	Vector3 minValues(10.f, 10.f, 0.2f);
+	Vector3 maxValues(110.f, 110.f, 1.5f);
+	int numSensors = 120;
+	float noiseDist = 0.3f;
+	Generator Gen(GenerationParameter()
+		.setMaximalVelocity(maxVelocity)
+		.setNumOfSensors(numSensors)
+		.setInitialTimestamp(initialTime)
+		.setBoundingCuboid(minValues, maxValues)
+		.setTimestampUnitPerSecond(timeStampUnitsPerSecond)
+		.setNoiseDimension(noiseDist)
+	);
+
+	Vector3 Pos(15.f, 80.f, 0.5f);
+	float DistSum = 0.f;
+	for (int i=0; i < NumRounds; ++i)
+	{
+		auto moved = Gen.addNoise(Pos);
+		auto noise = sqrtf(scalarProduct(moved - Pos, moved - Pos));
+		EXPECT_LE(noise, noiseDist);
+		DistSum += noise;
+	}
+	EXPECT_GE(DistSum / static_cast<float>(NumRounds), 0.2f * noiseDist);
+	EXPECT_LE(DistSum / static_cast<float>(NumRounds), 0.8f * noiseDist);
+}
+
 
 
