@@ -67,7 +67,7 @@ int main()
 
   using namespace PositionGenerator;
 
-  // create Generator with suitable parameter
+  // create Generator with suitable parameters
   float maxVelocity = 12.0; // 12m/s
   uint64_t timeStampUnitsPerSecond = 1000000; // microsec
   timestamp_t initialTime = 0;
@@ -75,7 +75,7 @@ int main()
   Vector3 maxValues(100.f, 100.f, 1.5f);
   int numSensors = 10;
   float noiseDimension = 0.3f;
-  float FrequencyInHz = 10.f;
+  float FrequencyInHz = 1.f;
 
   ChronoBasedGenerator Gen(GenerationParameter()
     .setMaximalVelocity(maxVelocity)
